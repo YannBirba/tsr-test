@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useCreatePost } from "../hooks/useCreatePost";
 
 export const NewPost = () => {
-  const createPost = useCreatePost();
-
   const [isError, setIsError] = useState(false);
   const [block, setBlock] = useState(false);
+
+  const createPost = useCreatePost(block);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const target = e.target as HTMLFormElement;
