@@ -4,19 +4,30 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "dev": "node server",
+    "build": "pnpm build:client && pnpm build:server",
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
+    "generate": "vite build --outDir dist/static && pnpm build:server && node prerender",
+    "serve": "NODE_ENV=production node server",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@tanstack/react-router": "0.0.1-beta.190",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@tanstack/react-router": "0.0.1-beta.191",
+    "@tanstack/react-start": "0.0.1-beta.191",
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "get-port": "^7.0.0",
+    "isbot": "^3.6.13",
+    "node-fetch": "^3.3.2",
+    "react": "18.3.0-canary-3c27178a2-20230920",
+    "react-dom": "18.3.0-canary-3c27178a2-20230920",
+    "serve-static": "^1.15.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@tanstack/router-devtools": "0.0.1-beta.190",
+    "@tanstack/router-devtools": "0.0.1-beta.191",
+    "@types/express": "^4.17.17",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.5.0",

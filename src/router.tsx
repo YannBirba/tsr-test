@@ -105,7 +105,7 @@ export const postRoute = new Route({
   component: lazyRouteComponent(() => import("./Views/Post"), "Post"),
   loader: async ({ params, abortController, context }) => {
     const res = await fetch(
-      `${context.apiUrl}/posts/${params.slug.split("-").at(-1)}`,
+      `${context.apiUrl}/posts/${params.slug.split("-").pop()}`,
       { signal: abortController.signal }
     );
     if (res.status === 404) throw new Error("Article introuvable");
@@ -116,15 +116,6 @@ export const postRoute = new Route({
     };
   },
   maxAge: 30_000,
-  errorComponent: ({ error }) => {
-    const { message } = error as RouteError;
-    return (
-      <>
-        <h1>Erreur</h1>
-        <p>{message}</p>
-      </>
-    );
-  },
 });
 
 export const newPostRoute = new Route({
@@ -206,17 +197,29 @@ if (!import.meta.env.VITE_API_URL) {
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
-export const router = new Router({
-  routeTree,
-  refetchOnWindowFocus: true,
-  defaultPreload: "intent",
-  context: {
-    apiUrl,
-  },
-});
+export const createRouter = () => {
+  return new Router({
+    routeTree,
+    defaultPendingComponent: () => <p>Loading...</p>,
+    defaultErrorComponent: ({ error }) => {
+      const { message } = error as RouteError;
+      return (
+        <>
+          <h1>Erreur</h1>
+          <p>{message}</p>
+        </>
+      );
+    },
+    reloadOnWindowFocus: true,
+    defaultPreload: "intent",
+    context: {
+      apiUrl,
+    },
+  });
+};
 
 declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router;
+    router: ReturnType<typeof createRouter>;
   }
 }
